@@ -1,27 +1,23 @@
-import React, { useState } from "react";
-import Navbar from "./Navbar";
+import React, { useContext } from "react";
+import CustomNavbar from "./Navbar";
 import Sidebar from "./Sidebar";
+import "./Layout.css";
 
 const Layout = ({ children }) => {
-  const [selectedBookId, setSelectedBookId] = useState(null);
-
   return (
     <>
-      <Navbar />
-      <div style={{ display: "flex" }}>
-        <Sidebar onSelectBook={setSelectedBookId} selectedBookId={selectedBookId} />
-        <main
-          style={{
-            marginTop: "60px",
-            padding: "20px",
-            flex: 1,
-            marginLeft: "200px",
-          }}
-        >
+      <CustomNavbar />
+      <div className="layout-wrapper">
+        <div className="sidebar-wrapper">
+          <Sidebar />
+        </div>
+        <main className="content-wrapper">
+          {children}
         </main>
       </div>
     </>
   );
 };
+
 
 export default Layout;

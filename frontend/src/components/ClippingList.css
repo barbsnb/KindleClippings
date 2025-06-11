@@ -1,0 +1,62 @@
+.clipping-list {
+  padding: 1.5rem;
+}
+
+.clipping-heading {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+.clipping-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.clipping-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 180px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.clipping-card:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.clipping-header {
+  margin-bottom: 0.75rem;
+}
+
+.book-title {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.book-author {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.clipping-content {
+  flex-grow: 1;
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+  color: #374151;
+  word-break: break-word;
+}
+
+.clipping-footer {
+  text-align: right;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}

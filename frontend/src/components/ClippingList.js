@@ -1,45 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React from 'react';
+import { useClippings } from '../contexts/ClippingsContext';
 import { format, parseISO } from 'date-fns';
-import Sidebar from './common/Sidebar';
+import './ClippingList.css';
 
 const ClippingList = () => {
-  const [clippings, setClippings] = useState([]);
-  const [selectedBook, setSelectedBook] = useState(null);
+  const { clippings, selectedBookId, loading, error } = useClippings();
 
-  useEffect(() => {
-    axios.get('http://localhost:8000/api/clippings/')
-      .then(res => setClippings(res.data))
-      .catch(console.error);
-  }, []);
-
-  const books = Array.from(new Set(clippings.map(clip => clip.book)));
-  const filteredClippings = selectedBook
-    ? clippings.filter(c => c.book === selectedBook)
-    : [];
+  if (loading) return <div className="loading">Loading clippings...</div>;
+  if (error) return <div className="error">Error loading clippings: {error.message}</div>;
 
   return (
-    <div className="flex h-screen">
-      <Sidebar
-        books={books}
-        selectedBook={selectedBook}
-        onSelect={setSelectedBook}
-      />
-      <main className="flex-1 p-6 overflow-y-auto">
-        <h2 className="text-2xl font-bold mb-6">
-          {selectedBook ? `Highlights from "${selectedBook}"` : 'Select a book'}
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredClippings.map((clip) => (
-            <div key={clip.id} className="border rounded p-4 shadow bg-white">
-              <div className="text-sm text-gray-500 mb-2">
+    <div className="clipping-list">
+      {clippings.length === 0 ? (
+        <p>No clippings found.</p>
+      ) : (
+        <div className="clipping-grid">
+          {clippings.map((clip) => (
+            <div key={clip.id} className="clipping-card">
+              <div className="clipping-header">
+                <div className="book-title">{clip.book}</div>
+                <div className="book-author text-sm text-gray-600">by {clip.author}</div>
+              </div>
+              <div className="clipping-content">{clip.highlight || clip.note}</div>
+              <div className="clipping-footer text-xs text-gray-500">
                 {clip.time ? format(parseISO(clip.time), 'dd MMM yyyy, HH:mm') : null}
               </div>
-              <p className="text-gray-800">{clip.highlight || clip.note}</p>
             </div>
           ))}
         </div>
-      </main>
+      )}
     </div>
   );
 };
