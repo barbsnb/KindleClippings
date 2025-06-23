@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { useContext, createContext, useEffect, useState } from "react";
 import client from "../axiosClient";
 
 export const BooksContext = createContext(null);
@@ -20,9 +20,17 @@ export const BooksProvider = ({ children }) => {
       });
   }, [shouldReload]);
 
+  const updateBook = (updatedBook) => {
+    setBooks((prevBooks) =>
+      prevBooks.map(b => b.id === updatedBook.id ? updatedBook : b)
+    );
+  };
+
   return (
-    <BooksContext.Provider value={{ books, setBooks, shouldReload, setShouldReload }}>
+    <BooksContext.Provider value={{ books, setBooks, shouldReload, setShouldReload, updateBook }}>
       {children}
     </BooksContext.Provider>
   );
 };
+
+export const useBooks = () => useContext(BooksContext);

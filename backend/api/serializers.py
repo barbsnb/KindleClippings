@@ -4,10 +4,11 @@ from .models import Clipping, Author, Book, HighlightContent, NoteContent
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Author
-        fields = ['name']
+        fields = ['id', 'name']
 
 class BookSerializer(serializers.ModelSerializer):
-    author = serializers.CharField(source='author.name')
+    # author = serializers.CharField(source='author.name')
+    author = AuthorSerializer(read_only=True)
 
     class Meta:
         model = Book
@@ -24,24 +25,27 @@ class NoteContentSerializer(serializers.ModelSerializer):
         fields = ['note']
 
 class ClippingSerializer(serializers.ModelSerializer):
-    author = serializers.SerializerMethodField()
-    book = serializers.CharField(source='book.title')
+    book = BookSerializer(read_only=True)
+    author = AuthorSerializer(read_only=True) 
+    
     highlight = serializers.SerializerMethodField()
     note = serializers.SerializerMethodField()
     time = serializers.DateTimeField(source='added_on', format="%Y-%m-%dT%H:%M:%SZ")  
+    visibility = serializers.BooleanField()
 
     class Meta:
         model = Clipping
-        fields = ['id', 'author', 'book', 'highlight', 'note', 'time']
+        fields = ['id', 'author', 'book', 'highlight', 'note', 'time', 'visibility']
 
-    def get_author(self, obj):
-        author = obj.book.author
-        return author.name if author else "Unknown"
+    # def get_author(self, obj):
+    #     author = obj.book.author
+    #     return author.name if author else "Unknown"
 
     def get_highlight(self, obj):
         return obj.highlight_content.text if hasattr(obj, 'highlight_content') else None
 
     def get_note(self, obj):
         return obj.note_content.note if hasattr(obj, 'note_content') else None
+    
 
         

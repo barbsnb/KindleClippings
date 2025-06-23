@@ -1,7 +1,8 @@
 import React, { useState, useContext } from "react";
 import { BooksContext } from "../../contexts/BooksContext";
-import { useSelectedEntity } from "../../contexts/SelectedEntityContext";
 import { useAuthors } from "../../contexts/AuthorsContext";
+import { useSelectedEntity } from "../../contexts/SelectedEntityContext";
+import { useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 
 const Sidebar = () => {
@@ -14,9 +15,14 @@ const Sidebar = () => {
     setSelectedAuthorId,
     clearSelection
   } = useSelectedEntity();
+  const navigate = useNavigate();
 
   const [tab, setTab] = useState('books');
   const [filter, setFilter] = useState('');
+
+  const goToClippings = () => {
+    navigate(`/`);
+  };
 
   const filteredBooks = books.filter(book =>
     book.title.toLowerCase().includes(filter.toLowerCase())
@@ -76,13 +82,14 @@ const Sidebar = () => {
               <button
                 key={book.id}
                 onClick={() => {
+                  goToClippings()
                   setSelectedBookId(book.id);
                   setSelectedAuthorId(null);
                 }}
                 className={`sidebar-button ${selectedBookId === book.id ? 'active' : ''}`}
               >
                 <div className="book-title">{book.title}</div>
-                <div className="book-author">by {book.author}</div>
+                <div className="book-author">by {book.author.name}</div>
               </button>
             ))}
           </>
@@ -96,9 +103,8 @@ const Sidebar = () => {
             <button
               key={author.id}
               onClick={() => {
-                console.log(author.id);
+                goToClippings()
                 setSelectedAuthorId(author.id);
-                console.log(author.id);
                 setSelectedBookId(null);
               }}
               className={`sidebar-button ${selectedAuthorId === author.id ? 'active' : ''}`}

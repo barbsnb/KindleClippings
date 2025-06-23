@@ -4,9 +4,9 @@ import './Navbar.css';
 const Navbar = () => {
   return (
     <nav className="navbar">
-      <div className="navbar-logo">MyApp</div>
+      <div className="navbar-logo">Clippings.io for free</div>
       <div className="navbar-links">
-        <a href="/home" className="navbar-link">Home</a>
+        <a href="/stats" className="navbar-link">Statistics</a>
       </div>
     </nav>
   );

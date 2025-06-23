@@ -25,8 +25,14 @@ export const AuthorsProvider = ({ children }) => {
     fetchAuthors();
   }, []);
 
+  const updateAuthor = (updatedAuthor) => {
+    setAuthors((prevAuthors) =>
+      prevAuthors.map(a => a.id === updatedAuthor.id ? updatedAuthor : a)
+    );
+  };
+
   return (
-    <AuthorsContext.Provider value={{ authors, loading, error }}>
+    <AuthorsContext.Provider value={{ authors, loading, error, updateAuthor }}>
       {children}
     </AuthorsContext.Provider>
   );

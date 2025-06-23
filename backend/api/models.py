@@ -29,6 +29,7 @@ class Clipping(models.Model):
     location = models.TextField(blank=True)
     added_on = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    visibility = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.book.title} ({self.get_type_display()})"

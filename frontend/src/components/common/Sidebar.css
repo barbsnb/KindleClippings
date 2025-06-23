@@ -3,8 +3,8 @@
   background-color: #f5f5f5;
   padding: 10px;
   border-right: 1px solid #ddd;
-  height: 100vh;
   overflow-y: auto;
+  height: calc(100vh - 60px);
 }
 
 .sidebar-button {
@@ -76,4 +76,3 @@
   color: #333;
 }
 
-/* zachowaj też swoje existing styles dla sidebar-button itd. */

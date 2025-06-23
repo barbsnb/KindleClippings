@@ -1,33 +1,45 @@
 import React from 'react';
-import ClippingList from './components/ClippingList';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";   
+
 import { BooksProvider } from './contexts/BooksContext';
 import { ClippingsProvider } from './contexts/ClippingsContext';
 import { SelectedEntityProvider } from './contexts/SelectedEntityContext';
 import { AuthorsProvider } from './contexts/AuthorsContext';
-import Layout from './components/common/Layout';    
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";    
+
+import Layout from './components/common/Layout'; 
+import ClippingList from './components/ClippingList';   
+import StatsPanel from './components/StatsPanel';
+ 
 
 function App() {
   return (
     <AuthorsProvider>
-    <BooksProvider>
-      <SelectedEntityProvider>
-      <ClippingsProvider>
-        <Router> 
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <Layout>
-                  <ClippingList />
-                </Layout>
-              }
-            />
-          </Routes>
-        </Router>
-      </ClippingsProvider>
-      </SelectedEntityProvider>
-    </BooksProvider>
+      <BooksProvider>
+        <SelectedEntityProvider>
+          <ClippingsProvider>
+            <Router> 
+              <Routes>
+                <Route
+                  path="/"
+                  element={
+                    <Layout>
+                      <ClippingList />
+                    </Layout>
+                  }
+                />
+
+                <Route path="/stats" 
+                element={
+                  <Layout>
+                  <StatsPanel />
+                  </Layout>
+                } 
+                />
+              </Routes>
+            </Router>
+          </ClippingsProvider>
+        </SelectedEntityProvider>
+      </BooksProvider>
     </AuthorsProvider>
   );
 }

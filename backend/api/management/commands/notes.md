@@ -9,7 +9,7 @@ Replace /dev/sdb1 with your actual device. Look for unique identifiers like ID_V
 2. Create a file /etc/udev/rules.d/99-kindle-import.rules with content like:
 
 `Automatically import clippings when Kindle is plugged in:`
-`ACTION=="add", SUBSYSTEM=="block", KERNEL=="sd?1", ENV{ID_VENDOR}=="Amazon", RUN+="/usr/local/bin/kindle-import.sh %k"`
+`ACTION=="add", SUBSYSTEM=="block", KERNEL=="sd?1", ENV{ID_VENDOR}=="Kindle", RUN+="/usr/local/bin/kindle-import.sh %k"`
 
 KERNEL=="sd?1" means the first partition of any SDB, SDC, etc.
 
