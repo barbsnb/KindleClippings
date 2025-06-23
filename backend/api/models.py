@@ -17,6 +17,12 @@ class Book(models.Model):
     def __str__(self):
         return f"{self.title} by {self.author.name}"
     
+class Tag(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+    
 class Clipping(models.Model):
     CLIP_TYPES = [
         ('highlight', 'Highlight'),
@@ -30,6 +36,7 @@ class Clipping(models.Model):
     added_on = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     visibility = models.BooleanField(default=True)
+    tags = models.ManyToManyField(Tag, blank=True, related_name='clippings')
 
     def __str__(self):
         return f"{self.book.title} ({self.get_type_display()})"
@@ -41,4 +48,6 @@ class HighlightContent(models.Model):
 class NoteContent(models.Model):
     clipping = models.OneToOneField(Clipping, on_delete=models.CASCADE, related_name="note_content")
     note = models.TextField()
+    
+
 

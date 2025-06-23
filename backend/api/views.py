@@ -1,13 +1,15 @@
 from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework import status
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
-from rest_framework import viewsets
-from .models import Clipping, Book, Author
-from .serializers import ClippingSerializer, BookSerializer, AuthorSerializer
+from rest_framework import viewsets, filters
+from .models import Clipping, Book, Author, Tag
+from .serializers import ClippingSerializer, BookSerializer, AuthorSerializer, TagSerializer
 from django.db.models import Count, Q
 
     
-# Lists - authors and books
+# Lists - authors, books and tags
 class AuthorsViewSet(viewsets.ModelViewSet):
     queryset = Author.objects.prefetch_related('books').all()
     serializer_class = AuthorSerializer
@@ -15,6 +17,13 @@ class AuthorsViewSet(viewsets.ModelViewSet):
 class BooksViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.select_related('author').all()
     serializer_class = BookSerializer
+    
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name']
+    #/api/tags/?search=abc
 
 # Clippings lists:    
 class ClippingViewSet(viewsets.ModelViewSet):
@@ -31,6 +40,30 @@ class ClippingViewSet(viewsets.ModelViewSet):
             return Clipping.objects.filter(visibility=False)
 
         return Clipping.objects.filter(visibility=True)
+    
+    @action(detail=True, methods=['get'])
+    def tags(self, request, pk=None):
+        clipping = self.get_object()
+        tags = clipping.tags.all()
+        serializer = TagSerializer(tags, many=True)
+        return Response(serializer.data)
+    # GET /api/clippings/<id>/tags/
+    
+    @action(detail=True, methods=['post'])
+    def add_tag(self, request, pk=None):
+        clipping = self.get_object()
+        tag_name = request.data.get('name', '').strip()
+        
+        if not tag_name:
+            return Response({'error': 'Tag name is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        tag, created = Tag.objects.get_or_create(name=tag_name)
+        clipping.tags.add(tag)
+        clipping.save()
+        
+        serializer = self.get_serializer(clipping)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    # POST /api/clippings/<id>/add_tag/
     
 class ClippingsByBookView(ListAPIView):
     serializer_class = ClippingSerializer

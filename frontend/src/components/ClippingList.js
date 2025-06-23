@@ -4,7 +4,7 @@ import { useAuthors } from '../contexts/AuthorsContext';
 import { useClippings } from '../contexts/ClippingsContext';
 import { format, parseISO } from 'date-fns';
 import './ClippingList.css';
-import { Eye, Pencil, Save } from 'lucide-react';
+import { Eye, Pencil, Save,  Plus, Minus } from 'lucide-react';
 
 
 const ClippingList = () => {
@@ -12,6 +12,7 @@ const ClippingList = () => {
   const { updateBook } = useBooks();
   const { updateAuthor } = useAuthors();
   
+  // editing
   const [editingId, setEditingId] = useState(null);
   const [editedValues, setEditedValues] = useState({
     book: { id: null, title: '' },
@@ -23,16 +24,30 @@ const ClippingList = () => {
     author: { id: null, name: '' },
   });
 
+  //filters
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredClippings = clippings.filter((clip) =>
-    (clip.highlight && clip.highlight.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (clip.note && clip.note.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filteredClippings = clippings.filter((clip) => {
+    const textMatch =
+      (clip.highlight && clip.highlight.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (clip.note && clip.note.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    const tagMatch =
+      clip.tags &&
+      clip.tags.some(tag => tag.name.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    return textMatch || tagMatch;
+  });
+
+  //tags:
+  const [openTagMenus, setOpenTagMenus] = useState({});
+  const [newTagTextByClipId, setNewTagTextByClipId] = useState({});
+  const [tagSuggestions, setTagSuggestions] = useState({});
 
   if (loading) return <div className="loading">Loading clippings...</div>;
   if (error) return <div className="error">Error loading clippings: {error.message}</div>;
 
+  //visibility
   const handleVisibilityClick = async (clip) => {
     try {
       await fetch(`/api/clippings/${clip.id}/`, {
@@ -48,6 +63,7 @@ const ClippingList = () => {
     }
   };
 
+  //editing
   const handleEditClick = (clip) => {
     console.log('clip in handleEditClick:', clip);
     if (!clip) {
@@ -127,6 +143,75 @@ const ClippingList = () => {
     }
   };
 
+  //tags:
+  const toggleTagMenu = (clipId) => {
+    setOpenTagMenus((prev) => ({
+      ...prev,
+      [clipId]: !prev[clipId],
+    }));
+  };
+
+  const handleAddTag = async (clipId) => {
+    const newTagName = newTagTextByClipId[clipId]?.trim();
+    if (!newTagName) return; // ignoruj puste tagi
+
+    try {
+      const response = await fetch(`http://localhost:8000/api/clippings/${clipId}/add_tag/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newTagName }),
+      });
+
+      if (!response.ok) throw new Error('Failed to add tag');
+
+      const updatedClipping = await response.json();
+      updateClipping(updatedClipping);
+
+      // wyczyść input tagu
+      setNewTagTextByClipId(prev => ({ ...prev, [clipId]: '' }));
+    } catch (error) {
+      console.error('Error adding tag:', error);
+    }
+  };
+
+  const fetchTagSuggestions = async (clipId, query) => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/tags/?search=${query}`);
+      const tags = await response.json();
+
+      console.log('Sugestie z backendu:', tags);
+
+      // odfiltruj tagi już przypisane do tego klipu
+      const existingTagNames = clippings.find(c => c.id === clipId)?.tags.map(t => t.name);
+      const filtered = tags.filter(tag => !existingTagNames.includes(tag.name));
+
+      setTagSuggestions(prev => ({ ...prev, [clipId]: filtered }));
+    } catch (error) {
+      console.error('Error fetching tag suggestions:', error);
+    }
+  };
+
+  const handleAddExistingTag = async (clipId, tagName) => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/clippings/${clipId}/add_tag/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: tagName }),
+      });
+
+      if (!response.ok) throw new Error('Failed to add tag');
+
+      const updatedClipping = await response.json();
+      updateClipping(updatedClipping);
+
+      // wyczyść input i podpowiedzi
+      setNewTagTextByClipId(prev => ({ ...prev, [clipId]: '' }));
+      setTagSuggestions(prev => ({ ...prev, [clipId]: [] }));
+    } catch (error) {
+      console.error('Error adding existing tag:', error);
+    }
+  };
+
 
   return (
     <div className="clipping-list">
@@ -177,6 +262,55 @@ const ClippingList = () => {
 
               <div className="clipping-content">{clip.highlight || clip.note}</div>
 
+              <div className="clipping-tags">
+                
+                {clip.tags && clip.tags.length > 0 &&
+                  clip.tags.map(tag => (
+                    <span key={tag.id} className="tag">
+                      {tag.name}
+                    </span>
+                  )
+                )}
+              </div>
+              
+              {openTagMenus[clip.id] && (
+                <div className="tag-menu mt-2">
+                  <input
+                    type="text"
+                    placeholder="Add a tag..."
+                    className="border rounded px-2 py-1 w-full"
+                    value={newTagTextByClipId[clip.id] || ''}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setNewTagTextByClipId(prev => ({ ...prev, [clip.id]: value }));
+                      fetchTagSuggestions(clip.id, value);
+                    }}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddTag(clip.id);
+                        setNewTagTextByClipId(prev => ({ ...prev, [clip.id]: '' }));
+                        setTagSuggestions(prev => ({ ...prev, [clip.id]: [] }));
+                      }
+                    }}
+                  />
+                  {tagSuggestions[clip.id]?.length > 0 && (
+                    <ul className="tag-suggestions absolute bg-white border border-gray-300 rounded mt-1 shadow z-10 w-full">
+                      {tagSuggestions[clip.id].map(tag => (
+                        <li
+                          key={tag.id}
+                          className="px-2 py-1 hover:bg-gray-100 cursor-pointer"
+                          onClick={() => handleAddExistingTag(clip.id, tag.name)}
+                        >
+                          {tag.name}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+
+
               <div className="clipping-footer flex justify-between items-center mt-2">
                 <div className="clipping-actions">
                   {editingId === clip.id ? (
@@ -198,6 +332,22 @@ const ClippingList = () => {
                     className="text-gray-600 hover:text-black cursor-pointer ml-2"
                     onClick={() => handleVisibilityClick(clip)}
                   />
+                  {openTagMenus[clip.id] ? (
+                    <Minus
+                      size={16}
+                      style={{ marginLeft: '5px' }}
+                      className="text-gray-600 hover:text-black cursor-pointer ml-2"
+                      onClick={() => toggleTagMenu(clip.id)}
+                    />
+                  ) : (
+                    <Plus
+                      size={16}
+                      style={{ marginLeft: '5px' }}
+                      className="text-gray-600 hover:text-black cursor-pointer ml-2"
+                      onClick={() => toggleTagMenu(clip.id)}
+                    />
+                  )}
+
                 </div>
 
                 <div className="text-xs text-gray-500">

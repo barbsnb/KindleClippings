@@ -6,6 +6,7 @@ router = DefaultRouter()
 router.register(r'clippings', views.ClippingViewSet, basename='clipping')
 router.register(r'authors', views.AuthorsViewSet, basename='authors')
 router.register(r'books', views.BooksViewSet, basename='books')
+router.register(r'tags', views.TagViewSet, basename='tag')
 
 urlpatterns = [
     path('', include(router.urls)),
