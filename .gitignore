@@ -17,6 +17,5 @@ env/
 
 frontend/
 backend/
-static/
 packpackage-lock.json
 package.json
