@@ -95,7 +95,9 @@ const ClippingList = () => {
     try {
       let updatedBook = null;
       let updatedAuthor = null;
+      let highlightChanged = false;
 
+      // PATCH for book
       if (editedValues.book.title !== originalValues.book.title) {
         const responseBook = await fetch(`http://localhost:8000/api/books/${editedValues.book.id}/`, {
           method: 'PATCH',
@@ -107,6 +109,7 @@ const ClippingList = () => {
         updateBook(updatedBook);
       }
 
+      // PATCH for author
       if (editedValues.author.name !== originalValues.author.name) {
         const responseAuthor = await fetch(`http://localhost:8000/api/authors/${editedValues.author.id}/`, {
           method: 'PATCH',
@@ -118,24 +121,57 @@ const ClippingList = () => {
         updateAuthor(updatedAuthor);
       }
 
-      if (updatedBook || updatedAuthor) {
+      // PATCH for highlight
+      if (editedValues.highlight !== originalValues.highlight) {
+        const responseHighlight = await fetch(`http://localhost:8000/api/clippings/${editingId}/edit_highlight/`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ highlight: editedValues.highlight }),
+        });
+
+        if (!responseHighlight.ok) throw new Error('Failed to update highlight');
+        const updatedClip = await responseHighlight.json();
+        highlightChanged = true;
+        updateClipping(updatedClip); 
+      }
+
+      if (updatedBook || updatedAuthor || highlightChanged) {
         clippings.forEach((clip) => {
-          if (updatedBook && clip.book.id === updatedBook.id) {
-            // Jeśli mamy nową książkę, aktualizujemy ją
-            let newAuthor = clip.book.author;
-            if (updatedAuthor && updatedAuthor.id === clip.book.author.id) {
-              // Jeśli mamy nowego autora i pasuje do autora tej książki
-              newAuthor = updatedAuthor;
-            } else if (updatedBook.author) {
-              // Jeśli nie ma aktualizacji autora, ale updatedBook ma autora, użyjemy go
-              newAuthor = updatedBook.author;
-            }
-            updateClipping({ ...clip, book: { ...updatedBook, author: newAuthor } });
-          } else if (updatedAuthor && clip.book.author.id === updatedAuthor.id) {
-            // Jeśli tylko autor się zmienił, ale książka nie
-            updateClipping({ ...clip, book: { ...clip.book, author: updatedAuthor } });
+          const isSameClip = clip.id === editingId;
+          const sameBook = updatedBook && clip.book.id === updatedBook.id;
+          const sameAuthor = updatedAuthor && clip.book.author.id === updatedAuthor.id;
+
+          let updated = { ...clip };
+
+          if (sameBook) {
+            // Zmieniona książka
+            updated.book = {
+              ...updatedBook,
+              author: sameAuthor
+                ? updatedAuthor
+                : updatedBook.author || clip.book.author,
+            };
+          } else if (sameAuthor) {
+            // Zmieniony autor (ale książka ta sama)
+            updated.book = {
+              ...clip.book,
+              author: updatedAuthor,
+            };
+          }
+
+          if (isSameClip && highlightChanged) {
+            updated.highlight_content = {
+              ...clip.highlight_content,
+              text: editedValues.highlight,
+            };
+          }
+
+          // Tylko jeśli coś się zmieniło
+          if (sameBook || sameAuthor || (isSameClip && highlightChanged)) {
+            updateClipping(updated);
           }
         });
+        highlightChanged = false;
       }
 
       setEditingId(null);

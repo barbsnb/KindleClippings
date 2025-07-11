@@ -81,6 +81,19 @@ class ClippingViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
     # POST /api/clippings/<id>/add_tag/
     
+    @action(detail=True, methods=["patch"])
+    def edit_highlight(self, request, pk=None):
+        clipping = self.get_object()
+        highlight_text = request.data.get("highlight")
+
+        if clipping.highlight_content:
+            clipping.highlight_content.text = highlight_text
+            clipping.highlight_content.save()
+            return Response({"status": "highlight updated"})
+        else:
+            return Response({"error": "No highlight content found"}, status=status.HTTP_404_NOT_FOUND)
+    # PATCH /api/clippings/${editingId}/edit_highlight/
+        
 class ClippingsByBookView(ListAPIView):
     serializer_class = ClippingSerializer
 
