@@ -8,6 +8,8 @@ from .models import Clipping, Book, Author, Tag
 from .serializers import ClippingSerializer, BookSerializer, AuthorSerializer, TagSerializer
 from django.db.models import Count, Q
 
+from django_filters.rest_framework import DjangoFilterBackend
+
     
 # Lists - authors, books and tags
 class AuthorsViewSet(viewsets.ModelViewSet):
@@ -28,18 +30,32 @@ class TagViewSet(viewsets.ModelViewSet):
 # Clippings lists:    
 class ClippingViewSet(viewsets.ModelViewSet):
     serializer_class = ClippingSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    
+    # Search:
+    search_fields = [
+        'highlight_content__text',      
+        'note_content__note',           
+        'book__title',                  
+        'book__author__name',           
+        'tags__name',                   
+    ]
     
     def get_queryset(self):
         visibility_param = self.request.query_params.get('visibility')
         
-        if visibility_param is None:
-            # Default - true
-            return Clipping.objects.filter(visibility=True)
+        # select_related do relacji OneToOne i ForeignKey
+        # prefetch_related do ManyToMany
+        qs = Clipping.objects.all()\
+            .select_related("book", "book__author", "highlight_content", "note_content")\
+            .prefetch_related("tags")
 
-        if visibility_param.lower() == 'false':
-            return Clipping.objects.filter(visibility=False)
+        if visibility_param is None or visibility_param.lower() == 'true':
+            qs = qs.filter(visibility=True)
+        elif visibility_param.lower() == 'false':
+            qs = qs.filter(visibility=False)
 
-        return Clipping.objects.filter(visibility=True)
+        return qs.distinct()
     
     @action(detail=True, methods=['get'])
     def tags(self, request, pk=None):

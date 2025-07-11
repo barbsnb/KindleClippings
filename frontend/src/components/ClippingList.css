@@ -2,6 +2,13 @@
   padding: 1.5rem;
 }
 
+.loader-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
 .clipping-heading {
   font-size: 1.5rem;
   font-weight: bold;
@@ -9,7 +16,7 @@
 }
 
 .clipping-grid {
-  width: calc(100vw - 400px);
+  width: calc(100vw - 320px);
   column-count: 1;
   column-gap: 1.5rem;
   padding: 1rem;
@@ -32,7 +39,7 @@
 /* ≥ 1200px: 4 kolumny */
 @media (min-width: 1200px) {
   .clipping-grid {
-    column-count: 3;
+    column-count: 1;
   }
 }
 
@@ -44,7 +51,7 @@
   background-color: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  padding: 1rem; /* Zmniejszony padding */
+  padding: 1rem; 
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
@@ -99,12 +106,21 @@
 }
 
 .clipping-filter {
-  width: 85%;
-  padding: 6px 8px;
-  margin-bottom: 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
   font-size: 14px;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  margin-left: 1.0 rem;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem; 
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.clipping-filter:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
 }
 
 .clipping-tags {
@@ -171,3 +187,5 @@
   background-color: #e5e7eb; /* bardzo jasny szary podświetlenie */
   color: #111827; /* ciemniejszy tekst na hover */
 }
+
+

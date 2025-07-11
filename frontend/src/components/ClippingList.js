@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useBooks } from '../contexts/BooksContext';
 import { useAuthors } from '../contexts/AuthorsContext';
 import { useClippings } from '../contexts/ClippingsContext';
 import { format, parseISO } from 'date-fns';
 import './ClippingList.css';
-import { Eye, Pencil, Save,  Plus, Minus } from 'lucide-react';
+import { Eye, Pencil, Save,  Plus, Minus, Loader2 } from 'lucide-react';
 
 
 const ClippingList = () => {
-  const { clippings, loading, error, hideClipping, updateClipping } = useClippings();
+  const { clippings, loading, error, hideClipping, updateClipping, filters, setFilters } = useClippings();
   const { updateBook } = useBooks();
   const { updateAuthor } = useAuthors();
   
@@ -17,26 +17,13 @@ const ClippingList = () => {
   const [editedValues, setEditedValues] = useState({
     book: { id: null, title: '' },
     author: { id: null, name: '' },
+    highlight: '',
   });
 
   const [originalValues, setOriginalValues] = useState({
     book: { id: null, title: '' },
     author: { id: null, name: '' },
-  });
-
-  //filters
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const filteredClippings = clippings.filter((clip) => {
-    const textMatch =
-      (clip.highlight && clip.highlight.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (clip.note && clip.note.toLowerCase().includes(searchTerm.toLowerCase()));
-
-    const tagMatch =
-      clip.tags &&
-      clip.tags.some(tag => tag.name.toLowerCase().includes(searchTerm.toLowerCase()));
-
-    return textMatch || tagMatch;
+    highlight: '',
   });
 
   //tags:
@@ -44,7 +31,19 @@ const ClippingList = () => {
   const [newTagTextByClipId, setNewTagTextByClipId] = useState({});
   const [tagSuggestions, setTagSuggestions] = useState({});
 
-  if (loading) return <div className="loading">Loading clippings...</div>;
+  //filters:
+  const [inputValue, setInputValue] = useState(filters.search);
+
+  //timeout to avoid fetching with every filer character
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setFilters((prev) => ({ ...prev, search: inputValue }));
+    }, 300); // debounce: 300ms
+
+    return () => clearTimeout(timeout);
+  }, [inputValue]);
+
+  if (loading) return <div className="loader-wrapper">  <Loader2 /> </div>;
   if (error) return <div className="error">Error loading clippings: {error.message}</div>;
 
   //visibility
@@ -83,10 +82,12 @@ const ClippingList = () => {
     setEditedValues({
       book: { id: clip.book.id, title: clip.book.title },
       author: { id: clip.book.author.id, name: clip.book.author.name },
+      highlight: clip.highlight || '',
     });
     setOriginalValues({
       book: { id: clip.book.id, title: clip.book.title },
       author: { id: clip.book.author.id, name: clip.book.author.name },
+      highlight: clip.highlight || '',
     });
   };
 
@@ -215,24 +216,23 @@ const ClippingList = () => {
 
   return (
     <div className="clipping-list">
-      {/* input do filtrowania */}
       <input
-        type="text"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        placeholder="Search..."
         className="clipping-filter"
-        placeholder="Filter clippings by text..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
       />
 
-      {filteredClippings.length === 0 ? (
+      {clippings.length === 0 ? (
         <p>No clippings found.</p>
       ) : (
         <div className="clipping-grid">
-          {filteredClippings.map((clip) => (
+          {clippings.map((clip) => (
             <div key={clip.id} className="clipping-card">
               <div className="clipping-header">
                 {editingId === clip.id ? (
                   <>
+                    {/* book name edit */}
                     <input
                       value={editedValues.book.title}
                       onChange={(e) =>
@@ -242,6 +242,7 @@ const ClippingList = () => {
                         }))
                       }
                     />
+                    {/* author name edit */}
                     <input
                       value={editedValues.author.name}
                       onChange={(e) =>
@@ -249,6 +250,14 @@ const ClippingList = () => {
                           ...prev,
                           author: { ...prev.author, name: e.target.value },
                         }))
+                      }
+                    />
+                    {/* highlight edit */}
+                    <textarea
+                      className="mt-2 w-full border rounded px-2 py-1"
+                      value={editedValues.highlight}
+                      onChange={(e) =>
+                        setEditedValues((prev) => ({ ...prev, highlight: e.target.value }))
                       }
                     />
                   </>

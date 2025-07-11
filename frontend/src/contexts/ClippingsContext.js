@@ -11,20 +11,31 @@ export const ClippingsProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const [filters, setFilters] = useState({
+    search: '',
+    visibility: true,
+  });
+
   const fetchClippings = async () => {
     setLoading(true);
     setError(null);
 
-    let url = "http://localhost:8000/api/clippings/";
+    let baseUrl = "http://localhost:8000/api/clippings/";
+    const params = new URLSearchParams();
 
     if (selectedBookId) {
-      url = `http://localhost:8000/api/books/${selectedBookId}/clippings/`;
+      baseUrl = `http://localhost:8000/api/books/${selectedBookId}/clippings/`;
     } else if (selectedAuthorId) {
-      url = `http://localhost:8000/api/authors/${selectedAuthorId}/clippings/`;
+      baseUrl = `http://localhost:8000/api/authors/${selectedAuthorId}/clippings/`;
+    } else {
+      if (filters.search) params.append('search', filters.search);
+      if (filters.visibility !== null) params.append('visibility', filters.visibility);
     }
 
+    const fullUrl = `${baseUrl}?${params.toString()}`;
+
     try {
-      const res = await axios.get(url);
+      const res = await axios.get(fullUrl);
       setClippings(res.data);
     } catch (err) {
       setError(err);
@@ -48,7 +59,7 @@ export const ClippingsProvider = ({ children }) => {
 
   useEffect(() => {
     fetchClippings();
-  }, [selectedBookId, selectedAuthorId]);
+  }, [selectedBookId, selectedAuthorId, filters]);
 
   const hideClipping = async (id) => {
     try {
@@ -78,6 +89,8 @@ export const ClippingsProvider = ({ children }) => {
         updateClipping,
         fetchClippings,
         fetchAllClippings,
+        filters,
+        setFilters,
       }}
     >
       {children}

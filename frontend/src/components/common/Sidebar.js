@@ -4,6 +4,7 @@ import { useAuthors } from "../../contexts/AuthorsContext";
 import { useSelectedEntity } from "../../contexts/SelectedEntityContext";
 import { useNavigate } from 'react-router-dom';
 import './Sidebar.css';
+import { Home, Heart, EyeClosed } from 'lucide-react';
 
 const Sidebar = () => {
   const { books } = useContext(BooksContext);
@@ -34,6 +35,12 @@ const Sidebar = () => {
 
   return (
     <div className="sidebar-wrapper">
+      <Home
+        size={17}
+        className="text-green-600 hover:text-green-800 cursor-pointer"
+        onClick={() => goToClippings()}
+      />
+
       {/* Tabs */}
       <div className="tabs">
         <button

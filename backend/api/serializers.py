@@ -31,7 +31,9 @@ class TagSerializer(serializers.ModelSerializer):
 
 class ClippingSerializer(serializers.ModelSerializer):
     book = BookSerializer(read_only=True)
-    author = AuthorSerializer(read_only=True) 
+    # author = AuthorSerializer(read_only=True) 
+    author = AuthorSerializer(source='book.author', read_only=True)
+
     
     highlight = serializers.SerializerMethodField()
     note = serializers.SerializerMethodField()
