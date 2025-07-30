@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework import viewsets, filters
-from .models import Clipping, Book, Author, Tag
+from .models import Clipping, Book, Author, Tag, NoteContent
 from .serializers import ClippingSerializer, BookSerializer, AuthorSerializer, TagSerializer
 from django.db.models import Count, Q
 
@@ -13,11 +13,11 @@ from django_filters.rest_framework import DjangoFilterBackend
     
 # Lists - authors, books and tags
 class AuthorsViewSet(viewsets.ModelViewSet):
-    queryset = Author.objects.prefetch_related('books').all()
+    queryset = Author.objects.prefetch_related('books').order_by('name')
     serializer_class = AuthorSerializer
 
 class BooksViewSet(viewsets.ModelViewSet):
-    queryset = Book.objects.select_related('author').all()
+    queryset = Book.objects.select_related('author').order_by('title')
     serializer_class = BookSerializer
     
 class TagViewSet(viewsets.ModelViewSet):
@@ -92,10 +92,28 @@ class ClippingViewSet(viewsets.ModelViewSet):
         if clipping.highlight_content:
             clipping.highlight_content.text = highlight_text
             clipping.highlight_content.save()
-            return Response({"status": "highlight updated"})
+            return Response(ClippingSerializer(clipping).data)
         else:
             return Response({"error": "No highlight content found"}, status=status.HTTP_404_NOT_FOUND)
     # PATCH /api/clippings/${editingId}/edit_highlight/
+    
+    @action(detail=True, methods=["patch"])
+    def edit_note(self, request, pk=None):
+        clipping = Clipping.objects.get(pk=pk)
+
+        try:
+            note = clipping.note_content  # spróbuj pobrać istniejącą notatkę
+            note.note = request.data.get('note', '')
+            note.save()
+        except NoteContent.DoesNotExist:
+            # Utwórz nową notatkę i przypisz do clippinga
+            note = NoteContent.objects.create(
+                clipping=clipping,
+                note=request.data.get('note', '')
+            )
+
+        return Response(ClippingSerializer(clipping).data)
+
         
 class ClippingsByBookView(ListAPIView):
     serializer_class = ClippingSerializer

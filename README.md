@@ -83,7 +83,7 @@ python manage.py migrate
 Then add all the data from MyClippings.txt file using a following command:
 
 ```bash
-python manage.py kindle-import
+python .\manage.py import_clippings file_path
 ```
 
 

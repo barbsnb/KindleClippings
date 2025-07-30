@@ -12,14 +12,42 @@ class KindleClippingParser:
 
     def parse_all(self):
         entries = self.raw_text.split("==========")
+        last_highlight = None
+
         for entry in entries:
             entry = entry.strip()
             if not entry:
                 continue
+
             parsed = self.parse_entry(entry)
-            if parsed:
+            if not parsed:
+                continue
+
+            if parsed["type"] == "highlight":
                 self.parsed_clippings.append(parsed)
+                last_highlight = parsed
+
+            elif parsed["type"] == "note":
+                # Do we have a highlight nearby?
+                if last_highlight and self._locations_match(parsed["location"], last_highlight["location"]):
+                    last_highlight["note"] = parsed["text"]  # ← podpinamy note
+                else:
+                    # fallback: create as separate note
+                    self.parsed_clippings.append(parsed)
+
         return self.parsed_clippings
+    
+    def _locations_match(self, note_loc, highlight_loc):
+        try:
+            note_start = int(note_loc.split('-')[0])
+            hl_parts = highlight_loc.split('-')
+            hl_start = int(hl_parts[0])
+            hl_end = int(hl_parts[-1])  
+
+            return abs(note_start - hl_end) <= 2
+        except:
+            return False
+
 
     def parse_entry(self, entry):
         # Example entry:
@@ -100,11 +128,9 @@ class KindleClippingParser:
             if clip["type"] == "bookmark":
                 continue
 
-            # Create or get author and book
             author_obj, _ = Author.objects.get_or_create(name=clip["author"])
             book_obj, _ = Book.objects.get_or_create(title=clip["title"], author=author_obj)
 
-            # Create or update clipping
             clipping, _ = Clipping.objects.update_or_create(
                 book=book_obj,
                 type=clip["type"],
@@ -117,6 +143,11 @@ class KindleClippingParser:
                     clipping=clipping,
                     defaults={"text": clip["text"]}
                 )
+                if "note" in clip:
+                    NoteContent.objects.update_or_create(
+                        clipping=clipping,
+                        defaults={"note": clip["note"]}
+                    )
             elif clip["type"] == "note":
                 NoteContent.objects.update_or_create(
                     clipping=clipping,

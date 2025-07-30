@@ -75,6 +75,12 @@
   color: #6b7280;
 }
 
+.note-text {
+  margin-top: 0.5rem;
+  color: #7f8797;
+  font-style: italic;
+}
+
 .clipping-content {
   flex-grow: 1;
   font-size: 0.95rem;
@@ -211,6 +217,7 @@
   background-color: #f9fafb;
   resize: vertical;
   transition: border-color 0.2s, box-shadow 0.2s;
+  height: 100px;
 }
 
 .edit-textarea:focus {
@@ -218,5 +225,26 @@
   box-shadow: 0 0 0 3px rgba(172, 185, 214, 0.2);
   outline: none;
 }
+
+.add-note-button {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #6b7280;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.add-note-button:hover {
+  color: #111827;
+}
+
+.add-note-button svg {
+  margin-right: 0.4rem;
+  width: 16px;
+  height: 16px;
+}
+
 
 

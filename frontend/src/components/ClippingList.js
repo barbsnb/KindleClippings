@@ -14,6 +14,7 @@ const ClippingList = () => {
   
   // editing
   const [editingId, setEditingId] = useState(null);
+  const [showNoteEditor, setShowNoteEditor] = useState({});
   const [editedValues, setEditedValues] = useState({
     book: { id: null, title: '' },
     author: { id: null, name: '' },
@@ -83,11 +84,13 @@ const ClippingList = () => {
       book: { id: clip.book.id, title: clip.book.title },
       author: { id: clip.book.author.id, name: clip.book.author.name },
       highlight: clip.highlight || '',
+      note: clip.note || '',
     });
     setOriginalValues({
       book: { id: clip.book.id, title: clip.book.title },
       author: { id: clip.book.author.id, name: clip.book.author.name },
       highlight: clip.highlight || '',
+      note: clip.note || '',
     });
   };
 
@@ -96,6 +99,8 @@ const ClippingList = () => {
       let updatedBook = null;
       let updatedAuthor = null;
       let highlightChanged = false;
+      let noteChanged = false;
+
 
       // PATCH for book
       if (editedValues.book.title !== originalValues.book.title) {
@@ -135,7 +140,22 @@ const ClippingList = () => {
         updateClipping(updatedClip); 
       }
 
-      if (updatedBook || updatedAuthor || highlightChanged) {
+      // PATCH for note
+      if (editedValues.note !== originalValues.note) {
+        const responseNote = await fetch(`http://localhost:8000/api/clippings/${editingId}/edit_note/`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ note: editedValues.note }),
+        });
+
+        if (!responseNote.ok) throw new Error('Failed to update note');
+        const updatedClip = await responseNote.json();  // pełny clipping z backendu
+        updateClipping(updatedClip);
+        noteChanged = true;
+      }
+
+
+      if (updatedBook || updatedAuthor || highlightChanged || noteChanged) {
         clippings.forEach((clip) => {
           const isSameClip = clip.id === editingId;
           const sameBook = updatedBook && clip.book.id === updatedBook.id;
@@ -159,19 +179,29 @@ const ClippingList = () => {
             };
           }
 
+          // Jeśli zmieniono highlight i to jest edytowany klip
           if (isSameClip && highlightChanged) {
-            updated.highlight_content = {
-              ...clip.highlight_content,
-              text: editedValues.highlight,
-            };
+            updated.highlight = editedValues.highlight;
           }
 
-          // Tylko jeśli coś się zmieniło
-          if (sameBook || sameAuthor || (isSameClip && highlightChanged)) {
+          // Jeśli zmieniono notatkę i to jest edytowany klip
+          if (isSameClip && noteChanged) {
+            updated.note = editedValues.note;
+          }
+
+          // Uaktualnij clipa tylko jeśli coś się zmieniło
+          if (
+            sameBook ||
+            sameAuthor ||
+            (isSameClip && highlightChanged) ||
+            (isSameClip && noteChanged)
+          ) {
             updateClipping(updated);
           }
         });
         highlightChanged = false;
+        noteChanged = false;
+        setShowNoteEditor({});
       }
 
       setEditingId(null);
@@ -298,6 +328,28 @@ const ClippingList = () => {
                         setEditedValues((prev) => ({ ...prev, highlight: e.target.value }))
                       }
                     />
+                    {/* note edit */}
+                    {(editedValues.note || showNoteEditor[clip.id]) ? (
+                      <textarea
+                        className="edit-textarea"
+                        value={editedValues.note}
+                        onChange={(e) =>
+                          setEditedValues((prev) => ({ ...prev, note: e.target.value }))
+                        }
+                      />
+                    ) : (
+                      <div
+                        className="add-note-button"
+                        onClick={() => {
+                          setShowNoteEditor(prev => ({ ...prev, [clip.id]: true }));
+                          setEditedValues(prev => ({ ...prev, note: '' }));
+                        }}
+                      >
+                        <Plus size={16} className="mr-1" />
+                        <span>Add note</span>
+                      </div>
+                    )}
+
                   </>
                 ) : (
                   <>
@@ -308,7 +360,17 @@ const ClippingList = () => {
               </div>
 
               {editingId !== clip.id && (
-                <div className="clipping-content">{clip.highlight || clip.note}</div>
+                <div className="clipping-content">
+                  {clip.highlight && (
+                    <div className="highlight-text">{clip.highlight}</div>
+                  )}
+                  
+                  {clip.note && (
+                    <div className="note-text mt-2 text-gray-600 italic">
+                      {clip.note}
+                    </div>
+                  )}
+                </div>
               )}
 
               <div className="clipping-tags">

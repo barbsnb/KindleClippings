@@ -36,6 +36,7 @@ class Clipping(models.Model):
     added_on = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     visibility = models.BooleanField(default=True)
+    favourite = models.BooleanField(default=False)
     tags = models.ManyToManyField(Tag, blank=True, related_name='clippings')
 
     def __str__(self):
