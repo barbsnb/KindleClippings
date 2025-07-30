@@ -156,21 +156,19 @@
   padding: 5px;
 }
 
-
-
 .tag-suggestions {
   position: absolute;
-  background-color: #f9fafb; /* bardzo jasny, neutralny kolor tła */
-  border: 1px solid #d1d5db; /* jasnoszare, delikatne obramowanie */
+  background-color: #f9fafb; 
+  border: 1px solid #d1d5db; 
   border-radius: 6px;
   margin-top: 0.25rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); /* bardzo subtelny cień */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); 
   z-index: 10;
   width: 80%;
-  max-height: 180px; /* ograniczenie wysokości, z scrollbar */
+  max-height: 180px; 
   overflow-y: auto;
   font-size: 0.9rem;
-  color: #374151; /* ciemniejszy, ale stonowany tekst */
+  color: #374151; 
   list-style: none;
   padding-left: 0;  
   margin: 0;        
@@ -184,8 +182,41 @@
 }
 
 .tag-suggestions li:hover {
-  background-color: #e5e7eb; /* bardzo jasny szary podświetlenie */
-  color: #111827; /* ciemniejszy tekst na hover */
+  background-color: #e5e7eb; 
+  color: #111827; 
+}
+
+
+.edit-input {
+  width: 95%;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #f9fafb;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.edit-input:focus {
+  border-color:  #111827;
+  box-shadow: 0 0 0 3px rgba(172, 185, 214, 0.2);
+  outline: none;
+}
+
+.edit-textarea {
+  width: 95%;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #f9fafb;
+  resize: vertical;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.edit-textarea:focus {
+  border-color:  #111827;
+  box-shadow: 0 0 0 3px rgba(172, 185, 214, 0.2);
+  outline: none;
 }
 
 

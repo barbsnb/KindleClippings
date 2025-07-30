@@ -4,7 +4,7 @@ import { useAuthors } from "../../contexts/AuthorsContext";
 import { useSelectedEntity } from "../../contexts/SelectedEntityContext";
 import { useNavigate } from 'react-router-dom';
 import './Sidebar.css';
-import { Home, Heart, EyeClosed } from 'lucide-react';
+import { Home, Heart, EyeClosed, Brain, Upload, Highlighter } from 'lucide-react';
 
 const Sidebar = () => {
   const { books } = useContext(BooksContext);
@@ -25,6 +25,29 @@ const Sidebar = () => {
     navigate(`/`);
   };
 
+  const handleAllClippingsClick = () => {
+    clearSelection();
+    setSelectedBookId(null);
+    setSelectedAuthorId(null);
+    goToClippings();
+  };
+
+  const goToFavourites = () => {
+    navigate(`/`);
+  };
+
+  const goToUpload = () => {
+    navigate(`/`);
+  };
+
+  const goToHome = () => {
+    navigate(`/`);
+  };
+
+  const goToHidden = () => {
+    navigate(`/`);
+  };
+
   const filteredBooks = books.filter(book =>
     book.title.toLowerCase().includes(filter.toLowerCase())
   );
@@ -35,11 +58,28 @@ const Sidebar = () => {
 
   return (
     <div className="sidebar-wrapper">
-      <Home
-        size={17}
-        className="text-green-600 hover:text-green-800 cursor-pointer"
-        onClick={() => goToClippings()}
-      />
+      <div className="icon-column">
+        <div className="icon-wrapper" onClick={goToHome}>
+          <Home size={17} className="icon-margin"/>
+          <span>Home</span>
+        </div>
+        <div className="icon-wrapper" onClick={goToUpload}>
+          <Upload size={17} className="icon-margin"/>
+          <span>Import</span>
+        </div>
+        <div className="icon-wrapper" onClick={handleAllClippingsClick}>
+          <Highlighter size={17} className="icon-margin"/>
+          <span>All highlights</span>
+        </div>
+        <div className="icon-wrapper" onClick={goToFavourites}>
+          <Heart size={17} className="icon-margin"/>
+          <span>Favourites</span>
+        </div>
+        <div className="icon-wrapper" onClick={goToHidden}>
+          <EyeClosed size={17} className="icon-margin"/>
+          <span>Hidden</span>
+        </div>
+      </div>
 
       {/* Tabs */}
       <div className="tabs">
@@ -78,13 +118,6 @@ const Sidebar = () => {
       <div className="list-container">
         {tab === 'books' && (
           <>
-            <button
-              onClick={clearSelection}
-              className={`sidebar-button ${!selectedBookId && !selectedAuthorId ? 'active' : ''}`}
-            >
-              <span className="book-title">All Clippings</span>
-            </button>
-
             {filteredBooks.map(book => (
               <button
                 key={book.id}

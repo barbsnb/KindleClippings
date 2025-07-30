@@ -270,6 +270,7 @@ const ClippingList = () => {
                   <>
                     {/* book name edit */}
                     <input
+                      className="edit-input"
                       value={editedValues.book.title}
                       onChange={(e) =>
                         setEditedValues((prev) => ({
@@ -280,6 +281,7 @@ const ClippingList = () => {
                     />
                     {/* author name edit */}
                     <input
+                      className="edit-input"
                       value={editedValues.author.name}
                       onChange={(e) =>
                         setEditedValues((prev) => ({
@@ -290,7 +292,7 @@ const ClippingList = () => {
                     />
                     {/* highlight edit */}
                     <textarea
-                      className="mt-2 w-full border rounded px-2 py-1"
+                      className="edit-textarea"
                       value={editedValues.highlight}
                       onChange={(e) =>
                         setEditedValues((prev) => ({ ...prev, highlight: e.target.value }))
@@ -305,7 +307,9 @@ const ClippingList = () => {
                 )}
               </div>
 
-              <div className="clipping-content">{clip.highlight || clip.note}</div>
+              {editingId !== clip.id && (
+                <div className="clipping-content">{clip.highlight || clip.note}</div>
+              )}
 
               <div className="clipping-tags">
                 

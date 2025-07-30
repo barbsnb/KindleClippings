@@ -54,6 +54,9 @@ class ClippingViewSet(viewsets.ModelViewSet):
             qs = qs.filter(visibility=True)
         elif visibility_param.lower() == 'false':
             qs = qs.filter(visibility=False)
+            
+        # from newest to oldest
+        qs = qs.order_by('-created_at') 
 
         return qs.distinct()
     
@@ -99,14 +102,18 @@ class ClippingsByBookView(ListAPIView):
 
     def get_queryset(self):
         book_id = self.kwargs.get("book_id")
-        return Clipping.objects.filter(book_id=book_id).select_related("book", "book__author").prefetch_related("highlight_content", "note_content")
+        return Clipping.objects.filter(book_id=book_id)\
+                .select_related("book", "book__author")\
+                .prefetch_related("highlight_content", "note_content")\
+                .order_by('-created_at')
 
 class ClippingsByAuthorView(ListAPIView):
     serializer_class = ClippingSerializer
 
     def get_queryset(self):
         author_id = self.kwargs["author_id"]
-        return Clipping.objects.filter(book__author__id=author_id)
+        return Clipping.objects.filter(book__author__id=author_id)\
+                .order_by('-created_at')
     
     
 # stats:

@@ -1,6 +1,6 @@
-.sidebar-container {
-  width: 200px;
-  background-color: #f5f5f5;
+.sidebar-wrapper {
+  width: 250px;
+  background-color: #f3f4f6;
   padding: 10px;
   border-right: 1px solid #ddd;
   overflow-y: auto;
@@ -9,7 +9,7 @@
 
 .sidebar-button {
   display: block;
-  width: 100%;
+  width: 90%;
   text-align: left;
   padding: 8px 12px;
   background-color: transparent;
@@ -21,7 +21,7 @@
 }
 
 .sidebar-button:hover {
-  background-color: #e2e2e2;
+  background-color: #e5e7eb;
 }
 
 .sidebar-button.active {
@@ -29,12 +29,13 @@
 }
 
 .sidebar-button .book-title {
-  font-weight: bold;
+  font-weight: 500;
+  font-size: 0.85rem;
 }
 
 .sidebar-button .book-author {
   font-size: 12px;
-  color: #555;
+  color: #6b7280;
 }
 
 .tabs {
@@ -50,13 +51,15 @@
   border: none;
   border-bottom: 2px solid transparent;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 500;
+  font-size: 0.8rem;
   transition: border-color 0.2s;
 }
 
 .tab-button.active {
-  border-color: #232324; /* niebieski */
+  border-color: #232324; 
   color: #232324;
+  font-weight: 600;
 }
 
 .sidebar-filter {
@@ -76,3 +79,37 @@
   color: #333;
 }
 
+.book-title {
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+.book-author {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.icon-column {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.icon-wrapper {
+  display: flex;
+  align-items: center;
+  color: #333; 
+  cursor: pointer;
+}
+
+.icon-wrapper span {
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: #374151; 
+}
+
+.icon-margin {
+  margin-right: 0.5rem; 
+}

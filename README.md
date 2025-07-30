@@ -43,7 +43,7 @@ pip install -r requirements.txt
 4. Navigate to the frontend directory:
 
 ```bash
-cd clippings-manager/frontend
+cd ./frontend
 ```
 
 5. Install dependencies:
@@ -73,6 +73,19 @@ python manage.py runserver  # For Django
 ```
 
 Ensure your backend runs on http://localhost:8000/api/, which is expected by the frontend. You can configure this with environment variables if needed.
+
+If you are running for the first time migrate changes in the database:
+
+```bash
+python manage.py migrate  
+```
+
+Then add all the data from MyClippings.txt file using a following command:
+
+```bash
+python manage.py kindle-import
+```
+
 
 ### Usage
 - Use the sidebar to select a specific book or author.
@@ -119,5 +132,8 @@ You can find the full setup instructions and source files here in the project:
 - Kindle device accessible via USB
 
 > **Note:** You may need to adjust device vendor info or file paths depending on your Linux distro and Kindle model.
+
+### TODO
+
 
 ---
