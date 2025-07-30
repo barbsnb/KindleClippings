@@ -128,8 +128,15 @@ const Sidebar = () => {
                 }}
                 className={`sidebar-button ${selectedBookId === book.id ? 'active' : ''}`}
               >
+              <div className="tooltip-container">
                 <div className="book-title">{book.title}</div>
+                <div className="tooltip-text">{book.title}</div>
+              </div>
+              
+              <div className="tooltip-container">
                 <div className="book-author">by {book.author.name}</div>
+                <div className="tooltip-text">{book.author.name}</div>
+              </div>
               </button>
             ))}
           </>

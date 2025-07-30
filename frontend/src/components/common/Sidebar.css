@@ -5,6 +5,7 @@
   border-right: 1px solid #ddd;
   overflow-y: auto;
   height: calc(100vh - 60px);
+  z-index: 9;
 }
 
 .sidebar-button {
@@ -28,22 +29,62 @@
   background-color: #d0d0d0;
 }
 
-.sidebar-button .book-title {
+.sidebar-button .book-title,
+.sidebar-button .book-author {
   font-weight: 500;
   font-size: 0.85rem;
-
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .sidebar-button .book-author {
   font-size: 12px;
   color: #6b7280;
+}
 
+.tooltip-container {
+  position: relative;
+  display: block;
+  max-width: 200px; /* ogranicza szerokość, by ellipsa działała */
+  cursor: pointer;
+}
+
+.tooltip-container .book-title,
+.tooltip-container .book-author {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: block;
+  max-width: 100%; /* nie przekracza container */
+}
+
+/* Tooltip - ukryty domyślnie */
+.tooltip-container .tooltip-text {
+  visibility: hidden;
+  background-color: #6b7280;
+  color: white;
+  font-size: 12px;
+  padding: 5px 8px;
+  border-radius: 4px;
+
+  position: absolute;
+  top: 110%; /* lub np. top: 110% jeśli chcesz pod spodem */
+  left: 0; /* tooltip pojawi się po prawej stronie */
+  transform: translateX(8px); /* przesunięcie 8px w prawo */
+  white-space: normal;
+  max-width: 250px;
+  width: max-content;
+  z-index: 999999;
+
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Pokazuje tooltip przy hover */
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .tabs {
