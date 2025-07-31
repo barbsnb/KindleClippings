@@ -9,6 +9,7 @@ import { AuthorsProvider } from './contexts/AuthorsContext';
 import Layout from './components/common/Layout'; 
 import ClippingList from './components/ClippingList';   
 import StatsPanel from './components/StatsPanel';
+import ImportPage from './components/ImportPage';
  
 
 function App() {
@@ -35,6 +36,15 @@ function App() {
                   </Layout>
                 } 
                 />
+
+                <Route path="/import" 
+                element={
+                  <Layout>
+                  <ImportPage />
+                  </Layout>
+                } 
+                />
+
               </Routes>
             </Router>
           </ClippingsProvider>

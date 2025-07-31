@@ -16,7 +16,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 # for importing clippings
 def import_new_clippings(request):
     try:
-        call_command('import_clippings_diff', 'My Clippings.txt')
+        call_command('import_clippings_diff', 'backend/clippings/clippings-8-06.txt')
         return JsonResponse({"status": "ok", "message": "Import finished."})
     except Exception as e:
         return JsonResponse({"status": "error", "message": str(e)}, status=500)

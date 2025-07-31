@@ -1,0 +1,50 @@
+.import-page-wrapper {
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin: 2rem;
+  max-width: 600px;
+}
+
+.import-button {
+  margin-top: 1rem;
+  padding: 0.6rem 1.2rem;
+  background-color: #232324;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.import-button:hover {
+  background-color: #3b3b3b;
+}
+
+.import-button:disabled {
+  background-color: #bbb;
+  cursor: not-allowed;
+}
+
+.import-message {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.import-message.success {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.import-message.error {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.icon-margin {
+  margin-right: 0.5rem;
+}

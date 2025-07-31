@@ -37,7 +37,7 @@ const Sidebar = () => {
   };
 
   const goToUpload = () => {
-    navigate(`/`);
+    navigate(`/import`);
   };
 
   const goToHome = () => {

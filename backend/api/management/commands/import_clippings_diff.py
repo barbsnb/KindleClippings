@@ -33,7 +33,7 @@ class Command(BaseCommand):
         # Generate git diff
         try:
             diff_output = subprocess.check_output(
-                ["git", "diff", "--no-prefix", "HEAD", filepath],
+                ["git", "diff", "--no-prefix", "HEAD", "--", filepath],
                 stderr=subprocess.STDOUT,
                 universal_newlines=True
             )
