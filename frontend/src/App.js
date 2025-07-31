@@ -10,6 +10,7 @@ import Layout from './components/common/Layout';
 import ClippingList from './components/ClippingList';   
 import StatsPanel from './components/StatsPanel';
 import ImportPage from './components/ImportPage';
+import HiddenList from './components/Hidden';
  
 
 function App() {
@@ -41,6 +42,14 @@ function App() {
                 element={
                   <Layout>
                   <ImportPage />
+                  </Layout>
+                } 
+                />
+
+                <Route path="/hidden" 
+                element={
+                  <Layout>
+                  <HiddenList />
                   </Layout>
                 } 
                 />

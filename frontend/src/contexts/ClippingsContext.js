@@ -73,6 +73,29 @@ export const ClippingsProvider = ({ children }) => {
     }
   };
 
+  const unhideClipping = async (id) => {
+    try {
+      await axios.patch(`http://localhost:8000/api/clippings/${id}/`, {
+        visibility: true,
+      });
+
+      setClippings((prev) => prev.filter((clip) => clip.id !== id));
+    } catch (err) {
+      console.error("Error uncovering clipping:", err);
+    }
+  };
+  
+  const deleteClipping = async (id) => {
+    try {
+      await fetch(`http://localhost:8000/api/clippings/${id}/`, {
+        method: 'DELETE',
+      });
+      setClippings((prev) => prev.filter((c) => c.id !== id));
+    } catch (error) {
+      console.error('Error deleting clipping:', error);
+    }
+  }
+
   const updateClipping = (updatedClip) => {
     setClippings((prev) =>
       prev.map((clip) => (clip.id === updatedClip.id ? updatedClip : clip))
@@ -86,11 +109,13 @@ export const ClippingsProvider = ({ children }) => {
         loading,
         error,
         hideClipping,
+        unhideClipping,
         updateClipping,
         fetchClippings,
         fetchAllClippings,
         filters,
         setFilters,
+        deleteClipping,
       }}
     >
       {children}

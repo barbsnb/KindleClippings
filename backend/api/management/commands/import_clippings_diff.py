@@ -14,10 +14,12 @@ class KindleClippingDiffParser:
             line[1:] for line in lines if line.startswith("+") and not line.startswith("+++")
         ]
         text = "\n".join(added_lines)
+        print("ADDED LINES TEXT:", text)  # DEBUG
         entries = text.split("==========")
         for entry in entries:
             entry = entry.strip()
             if entry:
+                print("ENTRY FOUND:\n", entry)  # DEBUG
                 self.parsed_clippings.append(entry)
         return self.parsed_clippings
 

@@ -131,7 +131,7 @@ class KindleClippingParser:
             author_obj, _ = Author.objects.get_or_create(name=clip["author"])
             book_obj, _ = Book.objects.get_or_create(title=clip["title"], author=author_obj)
 
-            clipping, created = Clipping.objects.update_or_create(
+            clipping, created = Clipping.objects.get_or_create(
                 book=book_obj,
                 type=clip["type"],
                 location=clip["location"],

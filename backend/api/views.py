@@ -62,23 +62,19 @@ class ClippingViewSet(viewsets.ModelViewSet):
     ]
     
     def get_queryset(self):
-        visibility_param = self.request.query_params.get('visibility')
-        
-        # select_related do relacji OneToOne i ForeignKey
-        # prefetch_related do ManyToMany
         qs = Clipping.objects.all()\
             .select_related("book", "book__author", "highlight_content", "note_content")\
             .prefetch_related("tags")
 
-        if visibility_param is None or visibility_param.lower() == 'true':
-            qs = qs.filter(visibility=True)
-        elif visibility_param.lower() == 'false':
-            qs = qs.filter(visibility=False)
-            
-        # from newest to oldest
-        qs = qs.order_by('-created_at') 
+        visibility_param = self.request.query_params.get('visibility')
 
-        return qs.distinct()
+        if self.request.method == 'GET':
+            if visibility_param is None or visibility_param.lower() == 'true':
+                qs = qs.filter(visibility=True)
+            elif visibility_param.lower() == 'false':
+                qs = qs.filter(visibility=False)
+
+        return qs.distinct().order_by('-created_at')
     
     @action(detail=True, methods=['get'])
     def tags(self, request, pk=None):

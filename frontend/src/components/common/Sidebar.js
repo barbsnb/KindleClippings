@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import { BooksContext } from "../../contexts/BooksContext";
+import { useClippings } from "../../contexts/ClippingsContext";
 import { useAuthors } from "../../contexts/AuthorsContext";
 import { useSelectedEntity } from "../../contexts/SelectedEntityContext";
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +9,7 @@ import { Home, Heart, EyeClosed, Brain, Upload, Highlighter } from 'lucide-react
 
 const Sidebar = () => {
   const { books } = useContext(BooksContext);
+  const { setFilters } = useClippings();
   const { authors, loading: authorsLoading } = useAuthors();
   const {
     selectedBookId,
@@ -19,7 +21,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
 
   const [tab, setTab] = useState('books');
-  const [filter, setFilter] = useState('');
+  const [filter, setFilterLocal] = useState('');
 
   const goToClippings = () => {
     navigate(`/`);
@@ -29,6 +31,7 @@ const Sidebar = () => {
     clearSelection();
     setSelectedBookId(null);
     setSelectedAuthorId(null);
+    setFilters({ search: '', visibility: true });
     goToClippings();
   };
 
@@ -45,7 +48,7 @@ const Sidebar = () => {
   };
 
   const goToHidden = () => {
-    navigate(`/`);
+    navigate(`/hidden`);
   };
 
   const filteredBooks = books.filter(book =>
@@ -87,7 +90,7 @@ const Sidebar = () => {
           className={`tab-button ${tab === 'books' ? 'active' : ''}`}
           onClick={() => {
             setTab('books');
-            setFilter('');
+            setFilterLocal('');
             clearSelection();
           }}
         >
@@ -97,7 +100,7 @@ const Sidebar = () => {
           className={`tab-button ${tab === 'authors' ? 'active' : ''}`}
           onClick={() => {
             setTab('authors');
-            setFilter('');
+            setFilterLocal('');
             clearSelection();
           }}
         >
@@ -110,7 +113,7 @@ const Sidebar = () => {
         type="text"
         placeholder={`Filter ${tab === 'books' ? 'books' : 'authors'}...`}
         value={filter}
-        onChange={(e) => setFilter(e.target.value)}
+        onChange={(e) => setFilterLocal(e.target.value)}
         className="sidebar-filter"
       />
 

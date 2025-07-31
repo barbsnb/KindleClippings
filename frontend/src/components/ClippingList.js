@@ -50,13 +50,6 @@ const ClippingList = () => {
   //visibility
   const handleVisibilityClick = async (clip) => {
     try {
-      await fetch(`/api/clippings/${clip.id}/`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ visibility: false }),
-      });
       hideClipping(clip.id);
     } catch (error) {
       console.error('Error hiding clipping:', error);
