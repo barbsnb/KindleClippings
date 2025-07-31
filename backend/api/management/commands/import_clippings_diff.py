@@ -1,6 +1,6 @@
 import subprocess
 from django.core.management.base import BaseCommand
-from import_clippings import KindleClippingParser 
+from .import_clippings import KindleClippingParser 
 
 class KindleClippingDiffParser:
     def __init__(self, diff_text):
@@ -37,6 +37,7 @@ class Command(BaseCommand):
                 stderr=subprocess.STDOUT,
                 universal_newlines=True
             )
+            print(diff_output)
         except subprocess.CalledProcessError as e:
             self.stderr.write(self.style.ERROR(f"Git diff failed: {e.output}"))
             return

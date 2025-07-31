@@ -13,4 +13,5 @@ urlpatterns = [
     path("books/<int:book_id>/clippings/", views.ClippingsByBookView.as_view(), name="clippings-by-book"),
     path("authors/<int:author_id>/clippings/", views.ClippingsByAuthorView.as_view(), name="clippings-by-author"),
     path("stats/", views.StatsView.as_view(), name="stats-view"),
+    path('import-clippings/', views.import_new_clippings, name='import-clippings'),
 ]

@@ -8,7 +8,18 @@ from .models import Clipping, Book, Author, Tag, NoteContent
 from .serializers import ClippingSerializer, BookSerializer, AuthorSerializer, TagSerializer
 from django.db.models import Count, Q
 
+from django.http import JsonResponse
+from django.core.management import call_command
+
 from django_filters.rest_framework import DjangoFilterBackend
+
+# for importing clippings
+def import_new_clippings(request):
+    try:
+        call_command('import_clippings_diff', 'My Clippings.txt')
+        return JsonResponse({"status": "ok", "message": "Import finished."})
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=500)
 
     
 # Lists - authors, books and tags
