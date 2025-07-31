@@ -6,6 +6,7 @@ class KindleClippingDiffParser:
     def __init__(self, diff_text):
         self.diff_text = diff_text
         self.parsed_clippings = []
+        self.latest_imported_clippings = []
 
     def extract_new_entries(self):
         lines = self.diff_text.splitlines()
@@ -29,13 +30,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         filepath = options['filepath']
-
-        # Generate git diff
+        repo_root = "C:/Users/barba/OneDrive/Dokumenty/Bebidonek/"
         try:
             diff_output = subprocess.check_output(
                 ["git", "diff", "--no-prefix", "HEAD", "--", filepath],
                 stderr=subprocess.STDOUT,
-                universal_newlines=True
+                universal_newlines=True,
+                cwd=repo_root
             )
             print(diff_output)
         except subprocess.CalledProcessError as e:
@@ -54,10 +55,13 @@ class Command(BaseCommand):
             return
 
         imported_count = 0
+        all_new = []
 
         for entry in entries:
             kparser = KindleClippingParser(entry)
-            parsed = kparser.parse_all()
-            imported_count += kparser.save_to_db()
+            kparser.parse_all()
+            saved = kparser.save_to_db()
+            all_new.extend(saved)
 
-        self.stdout.write(self.style.SUCCESS(f"Imported {imported_count} new clippings from git diff"))
+        self.stdout.write(self.style.SUCCESS(f"Imported {len(all_new)} new clippings from git diff"))
+        self.latest_imported_clippings = all_new

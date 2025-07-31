@@ -9,16 +9,25 @@ from .serializers import ClippingSerializer, BookSerializer, AuthorSerializer, T
 from django.db.models import Count, Q
 
 from django.http import JsonResponse
-from django.core.management import call_command
+from django.core.management import CommandError
+from api.management.commands.import_clippings_diff import Command as ImportCommand
 
 from django_filters.rest_framework import DjangoFilterBackend
+
+CLIPPINGS_FILE_PATH = 'backend/clippings/clippings-8-06.txt'
 
 # for importing clippings
 def import_new_clippings(request):
     try:
-        call_command('import_clippings_diff', 'backend/clippings/clippings-8-06.txt')
-        return JsonResponse({"status": "ok", "message": "Import finished."})
-    except Exception as e:
+        cmd = ImportCommand()
+        cmd.handle(filepath=CLIPPINGS_FILE_PATH)
+
+        return JsonResponse({
+            "status": "ok",
+            "message": f"Imported {len(cmd.latest_imported_clippings)} new clippings.",
+            "new_clippings": cmd.latest_imported_clippings
+        })
+    except CommandError as e:
         return JsonResponse({"status": "error", "message": str(e)}, status=500)
 
     

@@ -123,7 +123,7 @@ class KindleClippingParser:
         return clip_type, location, added_on
 
     def save_to_db(self):
-        count = 0
+        saved = []
         for clip in self.parsed_clippings:
             if clip["type"] == "bookmark":
                 continue
@@ -131,7 +131,7 @@ class KindleClippingParser:
             author_obj, _ = Author.objects.get_or_create(name=clip["author"])
             book_obj, _ = Book.objects.get_or_create(title=clip["title"], author=author_obj)
 
-            clipping, _ = Clipping.objects.update_or_create(
+            clipping, created = Clipping.objects.update_or_create(
                 book=book_obj,
                 type=clip["type"],
                 location=clip["location"],
@@ -154,8 +154,16 @@ class KindleClippingParser:
                     defaults={"note": clip["text"]}
                 )
 
-            count += 1
-        return count
+            if created:
+                saved.append({
+                    "book": book_obj.title,
+                    "author": author_obj.name,
+                    "text": clip["text"],
+                    "type": clip["type"],
+                    "added_on": clip["added_on"],
+                })
+        
+        return saved
 
 
 class Command(BaseCommand):
