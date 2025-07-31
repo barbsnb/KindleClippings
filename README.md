@@ -88,10 +88,32 @@ python .\manage.py import_clippings file_path
 
 
 ### Usage
+
 - Use the sidebar to select a specific book or author.
-- Filter clippings using the text input above the list.
-- Click the pencil icon to edit a book or author name inline.
+- Filter clippings using the search input above the list.
+- Click the pencil icon to edit book or author names inline.
 - Click the eye icon to hide a clipping from view.
+- Upload new clippings via the **Import** section.
+- Permanently delete clippings using the delete option.
+- Manage clipping tags by adding or removing tags on individual clippings.
+
+---
+
+### Running the Application
+
+After the initial setup, start the entire application with a single script:
+
+1. Make the script executable (only required once):
+
+```bash
+chmod +x start-all.sh
+```
+
+2. Run the script to start both backend and frontend servers:
+
+```bash
+./start-all.sh
+```
 
 ---
 
