@@ -37,7 +37,8 @@ const ImportPage = () => {
         <p>This will import only newly added Kindle clippings since the last import.</p>
 
         <button className="import-button" onClick={handleImport} disabled={importing}>
-          {importing ? "Importing..." : "Start Import"}
+          <Upload size={20} className="upload-icon" />
+          {importing ? "Importing..." : "Import Clippings"}
         </button>
 
         {result && (

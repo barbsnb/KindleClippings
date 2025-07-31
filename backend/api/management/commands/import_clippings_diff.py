@@ -38,7 +38,6 @@ class Command(BaseCommand):
                 universal_newlines=True,
                 cwd=repo_root
             )
-            print(diff_output)
         except subprocess.CalledProcessError as e:
             self.stderr.write(self.style.ERROR(f"Git diff failed: {e.output}"))
             return
@@ -54,7 +53,6 @@ class Command(BaseCommand):
             self.stdout.write(self.style.WARNING("No new clippings parsed."))
             return
 
-        imported_count = 0
         all_new = []
 
         for entry in entries:

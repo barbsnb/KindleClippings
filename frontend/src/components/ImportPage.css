@@ -1,26 +1,30 @@
 .import-page-wrapper {
   padding: 2rem;
   background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin: 2rem;
+  margin: 1rem;
   max-width: 600px;
 }
 
 .import-button {
   margin-top: 1rem;
-  padding: 0.6rem 1.2rem;
+  padding: 0.8rem 1.5rem;
   background-color: #232324;
   color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.2s;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem; 
+  transition: background-color 0.2s, transform 0.2s;
 }
 
 .import-button:hover {
   background-color: #3b3b3b;
+  transform: scale(1.02);
 }
 
 .import-button:disabled {
@@ -48,3 +52,50 @@
 .icon-margin {
   margin-right: 0.5rem;
 }
+
+.upload-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.clipping-list {
+  padding: 1.5rem;
+}
+
+.loader-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.clipping-heading {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+.clipping-grid {
+  width: calc(100vw - 320px);
+  column-count: 1;
+  column-gap: 1.5rem;
+  padding: 1rem;
+}
+
+.clipping-card {
+  display: inline-block;
+  width: 90%;
+  margin-bottom: 1.5rem;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem; 
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.clipping-card:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
