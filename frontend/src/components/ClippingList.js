@@ -7,7 +7,7 @@ import './ClippingList.css';
 import { Eye, Pencil, Save,  Plus, Heart, Minus, Loader2 } from 'lucide-react';
 
 
-const ClippingList = () => {
+const ClippingList = ({ limit = null }) => {
   const { 
     clippings,
     loading,
@@ -59,6 +59,12 @@ const ClippingList = () => {
 
   if (loading) return <div className="loader-wrapper">  <Loader2 /> </div>;
   if (error) return <div className="error">Error loading clippings: {error.message}</div>;
+
+  let clippinglist = clippings;
+
+  if (limit !== null) {
+    clippinglist = clippinglist.slice(0, limit);
+  }
 
   //visibility
   const handleVisibilityClick = async (clip) => {
@@ -308,18 +314,20 @@ const ClippingList = () => {
 
   return (
     <div className="clipping-list">
-      <input
+      {limit === null && ( 
+        <input
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         placeholder="Search..."
         className="clipping-filter"
       />
+      )}
 
       {clippings.length === 0 ? (
         <p>No clippings found.</p>
       ) : (
         <div className="clipping-grid">
-          {clippings.map((clip) => (
+          {clippinglist.map((clip) => (
             <div key={clip.id} className="clipping-card">
               <div className="clipping-header">
                 {editingId === clip.id ? (

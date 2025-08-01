@@ -7,7 +7,7 @@ import './ClippingList.css';
 import { Eye, Pencil, Save,  Plus, Heart, Minus, Loader2 } from 'lucide-react';
 
 
-const FavouritesList = () => {
+const FavouritesList = ({ limit = null, randomize = false }) => {
   const { 
     clippings,
     loading,
@@ -59,6 +59,16 @@ const FavouritesList = () => {
 
   if (loading) return <div className="loader-wrapper">  <Loader2 /> </div>;
   if (error) return <div className="error">Error loading clippings: {error.message}</div>;
+
+  let favourites = clippings.filter(c => c.favourite);
+
+  if (randomize) {
+    favourites = favourites.sort(() => Math.random() - 0.5);
+  }
+
+  if (limit !== null) {
+    favourites = favourites.slice(0, limit);
+  }
 
   //visibility
   const handleVisibilityClick = async (clip) => {
@@ -181,7 +191,7 @@ const FavouritesList = () => {
 
 
       if (updatedBook || updatedAuthor || highlightChanged || noteChanged) {
-        clippings.forEach((clip) => {
+        favourites.forEach((clip) => {
           const isSameClip = clip.id === editingId;
           const sameBook = updatedBook && clip.book.id === updatedBook.id;
           const sameAuthor = updatedAuthor && clip.book.author.id === updatedAuthor.id;
@@ -274,7 +284,7 @@ const FavouritesList = () => {
       console.log('Sugestie z backendu:', tags);
 
       // odfiltruj tagi już przypisane do tego klipu
-      const existingTagNames = clippings.find(c => c.id === clipId)?.tags.map(t => t.name);
+      const existingTagNames = favourites.find(c => c.id === clipId)?.tags.map(t => t.name);
       const filtered = tags.filter(tag => !existingTagNames.includes(tag.name));
 
       setTagSuggestions(prev => ({ ...prev, [clipId]: filtered }));
@@ -307,19 +317,23 @@ const FavouritesList = () => {
 
   return (
     <div className="clipping-list">
-     <h2 className="clipping-heading">Favourite Clippings</h2>
-      <input
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        placeholder="Search..."
-        className="clipping-filter"
-      />
+     {limit === null && (
+        <div>
+            <h2 className="clipping-heading">Favourite Clippings</h2>
+            <input
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            placeholder="Search..."
+            className="clipping-filter"
+            />
+        </div>
+    )}
 
-      {clippings.length === 0 ? (
+      {favourites.length === 0 ? (
         <p>No clippings found.</p>
       ) : (
         <div className="clipping-grid">
-          {clippings.map((clip) => (
+          {favourites.map((clip) => (
             <div key={clip.id} className="clipping-card">
               <div className="clipping-header">
                 {editingId === clip.id ? (

@@ -24,7 +24,7 @@ const Sidebar = () => {
   const [filter, setFilterLocal] = useState('');
 
   const goToClippings = () => {
-    navigate(`/`);
+    navigate(`/allclippings`);
   };
 
   const handleAllClippingsClick = () => {

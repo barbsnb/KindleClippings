@@ -16,37 +16,15 @@
 }
 
 .clipping-grid {
-  width: calc(100vw - 320px);
+  /* width: calc(100vw - 320px); */
   column-count: 1;
-  column-gap: 1.5rem;
-  padding: 1rem;
 }
 
-/* ≥ 600px: 2 kolumny */
-@media (min-width: 600px) {
-  .clipping-grid {
-    column-count: 1;
-  }
-}
-
-/* ≥ 900px: 3 kolumny */
-@media (min-width: 900px) {
-  .clipping-grid {
-    column-count: 2;
-  }
-}
-
-/* ≥ 1200px: 4 kolumny */
-@media (min-width: 1200px) {
-  .clipping-grid {
-    column-count: 1;
-  }
-}
 
 
 .clipping-card {
-  display: inline-block;
-  width: 90%;
+  display: block;
+  width: 100%;
   margin-bottom: 1.5rem;
   background-color: #ffffff;
   border: 1px solid #e5e7eb;

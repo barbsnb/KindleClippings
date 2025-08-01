@@ -1,0 +1,37 @@
+.home-container {
+  padding: 1.5rem;
+
+}
+
+/* FLEX layout for top row */
+.home-top-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+/* Ensure columns take 50% width on larger screens */
+.home-column {
+  flex: 1 1 calc(50% - 1rem); /* subtracting the gap to prevent overflow */
+  min-width: 50px;
+}
+
+/* HEADINGS */
+.home-section-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+/* STATS section */
+.home-stats-section {
+  margin-top: 2rem;
+}
+
+/* Make columns stack on small screens */
+@media (max-width: 768px) {
+  .home-column {
+    flex: 1 1 100%;
+  }
+}
