@@ -15,10 +15,6 @@ const HiddenList = () => {
     deleteClipping
   } = useClippings();
 
-  useEffect(() => {
-    setFilters((prev) => ({ ...prev, visibility: false }));
-    }, []);
-
   if (loading) return <div className="loader-wrapper"><Loader2 /></div>;
   if (error) return <div className="error">Error loading clippings: {error.message}</div>;
 

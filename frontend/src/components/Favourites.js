@@ -7,7 +7,7 @@ import './ClippingList.css';
 import { Eye, Pencil, Save,  Plus, Heart, Minus, Loader2 } from 'lucide-react';
 
 
-const ClippingList = () => {
+const FavouritesList = () => {
   const { 
     clippings,
     loading,
@@ -51,7 +51,7 @@ const ClippingList = () => {
   //timeout to avoid fetching with every filer character
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setFilters((prev) => ({ ...prev, search: inputValue }));
+      setFilters((prev) => ({ ...prev, search: inputValue, favourite: true }));
     }, 300); // debounce: 300ms
 
     return () => clearTimeout(timeout);
@@ -73,9 +73,7 @@ const ClippingList = () => {
   const handleFavClick = async (clip) => {
     try {
       favClipping(clip.id);
-      // console.log(clip.id);
-      // console.log(clip.favourite);
-      // setfavouredId(!clip.favourite)
+      setFilters((prev) => ({ ...prev, search: inputValue, favourite: true }));
     } catch (error) {
       console.error('Error hiding clipping:', error);
     }
@@ -84,6 +82,7 @@ const ClippingList = () => {
   const handleUnFavClick = async (clip) => {
     try {
       unfavClipping(clip.id);
+      setFilters((prev) => ({ ...prev, search: inputValue, favourite: true }));
     } catch (error) {
       console.error('Error hiding clipping:', error);
     }
@@ -308,6 +307,7 @@ const ClippingList = () => {
 
   return (
     <div className="clipping-list">
+     <h2 className="clipping-heading">Favourite Clippings</h2>
       <input
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
@@ -516,4 +516,4 @@ const ClippingList = () => {
   );
 };
 
-export default ClippingList;
+export default FavouritesList;

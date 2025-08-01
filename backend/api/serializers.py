@@ -39,11 +39,12 @@ class ClippingSerializer(serializers.ModelSerializer):
     note = serializers.SerializerMethodField()
     time = serializers.DateTimeField(source='added_on', format="%Y-%m-%dT%H:%M:%SZ")  
     visibility = serializers.BooleanField()
+    favourite = serializers.BooleanField()
     tags = TagSerializer(many=True, required=False)
 
     class Meta:
         model = Clipping
-        fields = ['id', 'author', 'book', 'highlight', 'note', 'time', 'visibility', 'tags']
+        fields = ['id', 'author', 'book', 'highlight', 'note', 'time', 'visibility', 'favourite', 'tags']
 
     def get_highlight(self, obj):
         return obj.highlight_content.text if hasattr(obj, 'highlight_content') else None

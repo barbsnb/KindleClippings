@@ -67,10 +67,14 @@ class ClippingViewSet(viewsets.ModelViewSet):
             .prefetch_related("tags")
 
         visibility_param = self.request.query_params.get('visibility')
+        favourites_param = self.request.query_params.get('favourite')
 
         if self.request.method == 'GET':
             if visibility_param is None or visibility_param.lower() == 'true':
-                qs = qs.filter(visibility=True)
+                if favourites_param.lower() == 'true':
+                    qs = qs.filter(visibility=True, favourite=True)
+                else:
+                    qs = qs.filter(visibility=True)
             elif visibility_param.lower() == 'false':
                 qs = qs.filter(visibility=False)
 

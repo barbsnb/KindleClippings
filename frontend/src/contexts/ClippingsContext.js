@@ -30,6 +30,7 @@ export const ClippingsProvider = ({ children }) => {
     } else {
       if (filters.search) params.append('search', filters.search);
       if (filters.visibility !== null) params.append('visibility', filters.visibility);
+      if (filters.favourite !== null) params.append('favourite', filters.favourite);
     }
 
     const fullUrl = `${baseUrl}?${params.toString()}`;
@@ -44,18 +45,6 @@ export const ClippingsProvider = ({ children }) => {
     }
   };
 
-  const fetchAllClippings = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await axios.get("http://localhost:8000/api/clippings/");
-      setClippings(res.data);
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     fetchClippings();
@@ -80,6 +69,30 @@ export const ClippingsProvider = ({ children }) => {
       });
 
       setClippings((prev) => prev.filter((clip) => clip.id !== id));
+    } catch (err) {
+      console.error("Error uncovering clipping:", err);
+    }
+  };
+
+  const favClipping = async (id) => {
+    try {
+      const response = await axios.patch(`http://localhost:8000/api/clippings/${id}/`, {
+        favourite: true,
+      });
+
+      updateClipping(response.data);
+    } catch (err) {
+      console.error("Error hiding clipping:", err);
+    }
+  };
+
+  const unfavClipping = async (id) => {
+    try {
+      const response = await axios.patch(`http://localhost:8000/api/clippings/${id}/`, {
+        favourite: false,
+      });
+
+      updateClipping(response.data);
     } catch (err) {
       console.error("Error uncovering clipping:", err);
     }
@@ -111,8 +124,9 @@ export const ClippingsProvider = ({ children }) => {
         hideClipping,
         unhideClipping,
         updateClipping,
+        favClipping,
+        unfavClipping,
         fetchClippings,
-        fetchAllClippings,
         filters,
         setFilters,
         deleteClipping,

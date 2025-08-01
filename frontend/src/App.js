@@ -11,6 +11,7 @@ import ClippingList from './components/ClippingList';
 import StatsPanel from './components/StatsPanel';
 import ImportPage from './components/ImportPage';
 import HiddenList from './components/Hidden';
+import FavouritesList from './components/Favourites';
  
 
 function App() {
@@ -26,6 +27,15 @@ function App() {
                   element={
                     <Layout>
                       <ClippingList />
+                    </Layout>
+                  }
+                />
+
+                <Route
+                  path="/favourites"
+                  element={
+                    <Layout>
+                      <FavouritesList />
                     </Layout>
                   }
                 />

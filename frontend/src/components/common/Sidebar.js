@@ -36,7 +36,8 @@ const Sidebar = () => {
   };
 
   const goToFavourites = () => {
-    navigate(`/`);
+    setFilters((prev) => ({ ...prev, visibility: true, favourite: true }));
+    navigate(`/favourites`);
   };
 
   const goToUpload = () => {
@@ -48,6 +49,7 @@ const Sidebar = () => {
   };
 
   const goToHidden = () => {
+    setFilters((prev) => ({ ...prev, visibility: false }));
     navigate(`/hidden`);
   };
 
